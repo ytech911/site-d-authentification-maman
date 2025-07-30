@@ -1,1150 +1,670 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Sécurisé - Gestion Boutique</title>
+    <title>Dashboard - Kōzy Coiffure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-dark: #030712;
+            --bg-light: #111827;
+            --bg-glass: rgba(31, 41, 55, 0.5);
+            --border-color: #374151;
+            --primary-blue: #3b82f6;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --red: #ef4444;
+            --yellow: #f59e0b;
+            --text-main: #f9fafb;
+            --text-secondary: #9ca3af;
+            --body-bg: var(--bg-dark);
+        }
+        
+        [data-theme="light"] {
+            --bg-dark: #f9fafb;
+            --bg-light: #f3f4f6;
+            --bg-glass: rgba(255, 255, 255, 0.7);
+            --border-color: #d1d5db;
+            --text-main: #111827;
+            --text-secondary: #6b7280;
+            --body-bg: #e5e7eb;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            min-height: 100vh;
-            color: #ffffff;
-            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            overflow: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
-
-        /* Particules d'arrière-plan */
-        body::before {
-            content: '';
+        
+        .auth-wrapper, .dashboard-wrapper {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
-            z-index: -1;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        .auth-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://res.cloudinary.com/dzmyybvbu/image/upload/v1753039219/cc87c303ddb554246934626e59b30740107fd3c4_d2hgqr.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .auth-wrapper.hidden, .dashboard-wrapper.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
         }
 
         .auth-container {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 48px;
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 60px;
-            position: relative;
-            max-width: 480px;
-            margin-left: auto;
-            margin-right: auto;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
+        .auth-container h1 { text-align: center; margin-bottom: 32px; }
+        .form-group { position: relative; margin-bottom: 20px; }
+        .register-form .form-group { margin-bottom: 24px; }
+        input { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 16px; background: var(--bg-light); color: var(--text-main); transition: all 0.3s ease; }
+        input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px var(--bg-light) inset !important; -webkit-text-fill-color: var(--text-main) !important; }
+        input:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+        .btn-full { width: 100%; padding: 16px; }
+        .btn-primary { background-color: var(--primary-blue); color: white; }
+        .btn-secondary { background-color: var(--bg-light); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-danger { background-color: rgba(239, 68, 68, 0.2); color: var(--red); border: 1px solid var(--red); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .switch-form-link { text-align: center; margin-top: 24px; color: var(--text-secondary); font-size: 14px; }
+        .switch-form-link a { color: var(--text-main); font-weight: 500; text-decoration: none; cursor: pointer; }
+        .switch-form-link a:hover { text-decoration: underline; }
+        .message { padding: 12px; margin-bottom: 20px; border-radius: 8px; font-size: 14px; text-align: center; }
+        .error-message { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .success-message { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .hidden { display: none !important; }
 
-        .dashboard-container {
-            display: none;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            margin-top: 20px;
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 1050; display: flex; flex-direction: column; gap: 10px; }
+        .toast { display: flex; align-items: center; padding: 16px; border-radius: 12px; background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 350px; animation: slideInRight 0.5s ease-out forwards; }
+        .toast.hiding { animation: fadeOut 0.5s ease-in forwards; }
+        .toast-icon { flex-shrink: 0; width: 24px; height: 24px; margin-right: 12px; }
+        .toast--success { border-left: 4px solid var(--green); }
+        .toast--success .toast-icon { color: var(--green); }
+        .toast--info { border-left: 4px solid var(--primary-blue); }
+        .toast--info .toast-icon { color: var(--primary-blue); }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        
+        .dashboard-wrapper { display: flex; }
+        .sidebar { flex-shrink: 0; width: 260px; background-color: var(--bg-dark); padding: 24px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; transition: background-color 0.5s ease; }
+        .sidebar-header { margin-bottom: 40px; }
+        .sidebar-header h2 { font-size: 24px; }
+        .sidebar-header span { font-size: 14px; color: var(--text-secondary); word-break: break-all; }
+        .sidebar-nav { flex-grow: 1; list-style: none; }
+        .nav-link { display: flex; align-items: center; padding: 12px 16px; margin-bottom: 8px; border-radius: 8px; color: var(--text-secondary); text-decoration: none; transition: all 0.2s ease; }
+        .nav-link svg { width: 20px; margin-right: 12px; }
+        .nav-link:hover { background-color: var(--bg-light); color: var(--text-main); }
+        .nav-link.active { background-color: var(--primary-blue); color: var(--text-main); font-weight: 600; }
+        .logout-btn { background-color: var(--red); color: white; }
+        
+        .main-content { flex-grow: 1; height: 100vh; overflow-y: auto; }
+        .panel { padding: 40px; } .panel.hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .panel.active { animation: fadeIn 0.5s ease-out; }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .page-header h1 { font-size: 28px; font-weight: 700; }
+        
+        .kpi-card, .chart-container, .table-wrapper {
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.5s ease, border-color 0.5s ease;
         }
+        .kpi-card { padding: 24px; }
+        .chart-container { padding: 24px; }
+        .table-wrapper { padding: 8px; overflow-x: auto; }
 
-        h1, h2 {
-            color: #ffffff;
-            text-align: center;
-            margin-bottom: 32px;
-            font-weight: 700;
-            font-size: 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .kpi-header { display: flex; align-items: center; color: var(--text-secondary); margin-bottom: 16px; }
+        .kpi-icon { width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; margin-right: 16px; }
+        .kpi-icon.blue { background-color: rgba(59, 130, 246, 0.2); color: var(--primary-blue); }
+        .kpi-icon.green { background-color: rgba(16, 185, 129, 0.2); color: var(--green); }
+        .kpi-icon.purple { background-color: rgba(139, 92, 246, 0.2); color: var(--purple); }
+        .kpi-value { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .progress-bar { background-color: var(--border-color); height: 4px; border-radius: 2px; overflow: hidden; }
+        .progress-bar div { height: 100%; border-radius: 2px; }
+        
+        .chart-container h3 { margin-bottom: 16px; font-weight: 600; }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th, td { padding: 16px; text-align: left; }
+        th { color: var(--text-secondary); }
+        tbody tr { transition: background-color 0.2s ease; }
+        tbody tr:hover { background-color: rgba(55, 65, 81, 0.3); }
+        [data-theme="light"] tbody tr:hover { background-color: rgba(209, 213, 219, 0.5); }
+        
+        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .status-badge.green { background-color: rgba(16, 185, 129, 0.2); color: var(--green); }
+        .status-badge.yellow { background-color: rgba(245, 158, 11, 0.2); color: var(--yellow); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .form-grid .form-group { grid-column: span 2; }
+        .form-grid .form-group.col-span-1 { grid-column: span 1; }
+        
+        .toggle-switch { display: flex; align-items: center; justify-content: space-between; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-blue); }
+        input:checked + .slider:before { transform: translateX(16px); }
+
+        .appearance-card { margin-top: 30px; }
+        .appearance-control { position: relative; }
+        .settings-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            width: 300px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 8px;
+            z-index: 10;
+            animation: fadeIn 0.2s ease-out;
         }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-            font-size: 14px;
+        .dropdown-section { padding: 8px; }
+        .dropdown-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            padding: 0 8px 8px 8px;
         }
-
-        input[type="email"], input[type="password"], input[type="text"] {
-            width: 100%;
-            padding: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-top: 12px;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.3);
-            color: #ffffff;
-        }
-
-        .btn-logout {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-            color: white;
-            width: auto;
-            padding: 12px 24px;
-            margin-left: auto;
-            display: block;
-            font-size: 14px;
-        }
-
-        .btn-logout:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 25px rgba(238, 90, 82, 0.3);
-        }
-
-        .error-message {
-            background: rgba(255, 107, 107, 0.1);
-            color: #ff6b6b;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 107, 107, 0.2);
-            backdrop-filter: blur(10px);
-            font-size: 14px;
-        }
-
-        .success-message {
-            background: rgba(72, 187, 120, 0.1);
-            color: #48bb78;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(72, 187, 120, 0.2);
-            backdrop-filter: blur(10px);
-            font-size: 14px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .tab-buttons {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 32px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.6);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .tab-btn:not(.active):hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .user-info {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            margin-top: 8px;
-        }
-
-        .dashboard-grid {
+        .theme-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-top: 32px;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
         }
-
-        .dashboard-card {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(20px);
-            padding: 32px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .theme-btn {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-secondary);
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            text-align: center;
+            transition: all 0.2s ease;
         }
-
-        .dashboard-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        .theme-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--text-main);
         }
-
-        .dashboard-card:hover::before {
-            opacity: 1;
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
-            border-color: rgba(102, 126, 234, 0.3);
-        }
-
-        .card-icon {
-            font-size: 56px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-            z-index: 1;
-        }
-
-        .dashboard-card h3 {
-            color: #ffffff;
-            margin-bottom: 12px;
-            font-size: 18px;
+        .theme-btn.active {
+            border-color: var(--primary-blue);
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
             font-weight: 600;
-            position: relative;
-            z-index: 1;
         }
-
-        .dashboard-card p {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            line-height: 1.5;
-            position: relative;
-            z-index: 1;
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
         }
-
-        .loading {
-            text-align: center;
-            padding: 80px 20px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 24px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Animations d'entrée */
-        .auth-container {
-            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .dashboard-container {
-            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Popup de confirmation */
-        .success-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 1000;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            animation: popupSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .dropdown-item:hover { background-color: var(--bg-glass); }
+        .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 8px; }
 
         .popup-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(3px);
-            z-index: 999;
-            animation: fadeIn 0.3s ease;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
         }
-
-        .popup-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        .popup-container {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            animation: slideInUp 0.4s ease-out;
         }
-
-        .popup-title {
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #48bb78, #38b2ac);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .popup-message {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
-            line-height: 1.5;
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 24px;
         }
-
-        .popup-user-info {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .popup-user-name {
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-
-        .popup-user-email {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-        }
-
-        .popup-close-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .popup-close-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        @keyframes popupSlideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.7);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-            70% {
-                transform: scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 16px;
-            }
-            
-            .auth-container {
-                padding: 32px 24px;
-                margin-top: 20px;
-            }
-
-            .dashboard-container {
-                padding: 24px;
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 16px;
-            }
-
-            .btn-logout {
-                margin-left: 0;
-            }
-
-            h1, h2 {
-                font-size: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .auth-container {
-                padding: 24px 20px;
-            }
-
-            .dashboard-card {
-                padding: 24px;
-            }
-
-            .card-icon {
-                font-size: 48px;
-            }
+        .popup-header h3 { font-size: 20px; font-weight: 600; }
+        .popup-header .close-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 24px; line-height: 1; padding: 0; }
+        .popup-body .form-group { margin-bottom: 16px; }
+        .popup-body label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px; }
+        .popup-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Page de connexion/inscription -->
-        <div id="authContainer" class="auth-container">
-            <h1>✨ Dashboard Admin ✨</h1>
-            
-            <div class="tab-buttons">
-                <button class="tab-btn active" onclick="showLogin()">Connexion</button>
-                <button class="tab-btn" onclick="showRegister()">Inscription</button>
-            </div>
-
-            <div id="errorMessage" class="error-message hidden"></div>
-            <div id="successMessage" class="success-message hidden"></div>
-
-            <!-- Formulaire de connexion -->
-            <div id="loginForm">
-                <form onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Mot de passe</label>
-                        <input type="password" id="loginPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Se connecter</button>
-                </form>
-            </div>
-
-            <!-- Formulaire d'inscription -->
-            <div id="registerForm" class="hidden">
-                <form onsubmit="handleRegister(event)">
-                    <div class="form-group">
-                        <label for="registerName">Nom complet</label>
-                        <input type="text" id="registerName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail">Email</label>
-                        <input type="email" id="registerEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Mot de passe</label>
-                        <input type="password" id="registerPassword" required minlength="6">
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirmer le mot de passe</label>
-                        <input type="password" id="confirmPassword" required minlength="6">
-                    </div>
-                    <button type="submit" class="btn btn-primary">S'inscrire</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Dashboard -->
-        <div id="dashboardContainer" class="dashboard-container">
-            <div class="dashboard-header">
-                <div>
-                    <h2>Dashboard - Gestion Boutique</h2>
-                    <div class="user-info">
-                        Bienvenue, <span id="userName"></span>
-                    </div>
-                </div>
-                <button class="btn btn-logout" onclick="handleLogout()">Déconnexion</button>
-            </div>
-
-            <div class="dashboard-grid">
-                <div class="dashboard-card">
-                    <div class="card-icon">📊</div>
-                    <h3>Analytics</h3>
-                    <p>Tableaux de bord et métriques en temps réel</p>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="card-icon">🛒</div>
-                    <h3>E-commerce</h3>
-                    <p>Gestion des commandes et inventaire</p>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="card-icon">💎</div>
-                    <h3>Salon & Spa</h3>
-                    <p>Rendez-vous et services beauté</p>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="card-icon">💳</div>
-                    <h3>Paiements</h3>
-                    <p>Transactions et paramètres financiers</p>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="card-icon">👥</div>
-                    <h3>Clients</h3>
-                    <p>Base de données et fidélisation</p>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="card-icon">⚙️</div>
-                    <h3>Paramètres</h3>
-                    <p>Configuration système et sécurité</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Loading -->
-        <div id="loadingContainer" class="loading hidden">
-            <div class="spinner"></div>
-            <p>Chargement en cours...</p>
-        </div>
-
-        <!-- Popup de succès de connexion -->
-        <div id="successPopup" class="hidden">
-            <div class="popup-overlay" onclick="closeSuccessPopup()"></div>
-            <div class="success-popup">
-                <div class="popup-icon">✨</div>
-                <div class="popup-title">Connexion Réussie !</div>
-                <div class="popup-message">Bienvenue dans votre dashboard d'administration</div>
-                <div class="popup-user-info">
-                    <div class="popup-user-name" id="popupUserName">Nom d'utilisateur</div>
-                    <div class="popup-user-email" id="popupUserEmail">email@exemple.com</div>
-                </div>
-                <button class="popup-close-btn" onclick="closeSuccessPopup()">Accéder au Dashboard</button>
-            </div>
-        </div>
+    <div id="app">
+        <div id="authWrapper" class="auth-wrapper"></div>
+        <div id="dashboardWrapper" class="dashboard-wrapper hidden"></div>
+        <div id="toast-container"></div>
+        <div id="popup-root"></div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-firestore-compat.min.js"></script>
 
     <script>
-        // Configuration Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAcpJPP1fdjfo2iqfN4spZoWPoB-NS_FVQ",
-            authDomain: "site-maman-c924f.firebaseapp.com",
+        // --- CONFIG & INIT ---
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAcpJPP1fdjfo2iqfN4spZoWPoB-NS_FVQ", 
+            authDomain: "site-maman-c924f.firebaseapp.com", 
             projectId: "site-maman-c924f",
-            storageBucket: "site-maman-c924f.firebasestorage.app",
-            messagingSenderId: "846419743658",
-            appId: "1:846419743658:web:e040382dd1caf1bb9c11d3",
-            measurementId: "G-V5VMDF58QE"
         };
-
-        // Initialisation Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        
+        // --- STATE & DOM ---
+        let currentAppState = '';
+        let charts = {};
+        let currentUserSettings = {};
+        const authWrapper = document.getElementById('authWrapper');
+        const dashboardWrapper = document.getElementById('dashboardWrapper');
 
-        // Variables globales pour la sécurité
-        let currentUser = null;
-        let sessionValid = false;
+        // --- STATE MANAGEMENT ---
+        async function setUIState(state, user = null) {
+            if (state === currentAppState) return;
+            currentAppState = state;
 
-        // Éléments DOM
-        const authContainer = document.getElementById('authContainer');
-        const dashboardContainer = document.getElementById('dashboardContainer');
-        const loadingContainer = document.getElementById('loadingContainer');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const successPopup = document.getElementById('successPopup');
-
-        // Fonction pour afficher la popup de succès
-        function showSuccessPopup(user) {
-            // Mise à jour des informations utilisateur dans la popup
-            document.getElementById('popupUserName').textContent = user.displayName || user.email.split('@')[0];
-            document.getElementById('popupUserEmail').textContent = user.email;
-            
-            // Afficher la popup avec animation
-            successPopup.classList.remove('hidden');
-            
-            // Auto-fermeture après 5 secondes
-            setTimeout(() => {
-                if (!successPopup.classList.contains('hidden')) {
-                    closeSuccessPopup();
-                }
-            }, 5000);
+            if (state === 'DASHBOARD') {
+                dashboardWrapper.innerHTML = getDashboardHTML(user);
+                dashboardWrapper.classList.remove('hidden');
+                authWrapper.classList.add('hidden');
+                initDashboardCharts();
+                await loadAndApplyUserSettings(user);
+                showToast(`Bienvenue, ${user.displayName || user.email.split('@')[0]} !`, 'success');
+            } else { // 'AUTH' state
+                authWrapper.innerHTML = getAuthHTML();
+                dashboardWrapper.classList.add('hidden');
+                authWrapper.classList.remove('hidden');
+            }
         }
 
-        // Fonction pour fermer la popup
-        function closeSuccessPopup() {
-            successPopup.classList.add('hidden');
-        }
-
-        // Protection contre l'accès direct - Vérification au chargement avec logs
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Application démarrée');
-            console.log('🔧 Configuration Firebase:', firebaseConfig.projectId);
-            
-            showLoading();
-            
-            // Vérification de l'authentification avec logs détaillés
-            auth.onAuthStateChanged(function(user) {
-                console.log('🔄 État authentification changé');
-                
-                hideLoading();
-                
-                if (user) {
-                    console.log('👤 Utilisateur détecté:', {
-                        uid: user.uid,
-                        email: user.email,
-                        emailVerified: user.emailVerified,
-                        displayName: user.displayName,
-                        creationTime: user.metadata.creationTime,
-                        lastSignInTime: user.metadata.lastSignInTime
-                    });
-                    
-                    if (user.emailVerified) {
-                        console.log('✅ Email vérifié, accès dashboard autorisé');
-                        currentUser = user;
-                        sessionValid = true;
-                        showDashboard();
-                    } else {
-                        console.log('❌ Email non vérifié, accès refusé');
-                        currentUser = null;
-                        sessionValid = false;
-                        showAuth();
-                        showError("Veuillez vérifier votre email avant de continuer. Vérifiez aussi vos spams.");
-                    }
-                } else {
-                    console.log('🚫 Aucun utilisateur connecté');
-                    currentUser = null;
-                    sessionValid = false;
-                    showAuth();
-                }
-            });
-
-            // Protection contre la manipulation des URLs
-            setInterval(checkSecurityIntegrity, 5000);
-            console.log('🛡️ Système de sécurité activé');
+        auth.onAuthStateChanged(user => {
+            const isUserValid = user && user.emailVerified;
+            setUIState(isUserValid ? 'DASHBOARD' : 'AUTH', user);
+            if (user && !user.emailVerified) auth.signOut();
         });
 
-        // Fonction de vérification de sécurité continue
-        function checkSecurityIntegrity() {
-            if (dashboardContainer.style.display !== 'none' && !sessionValid) {
-                // Tentative d'accès non autorisé détectée
-                console.warn('Tentative d\'accès non autorisé détectée');
-                forceLogout();
-            }
-            
-            // Vérification du token Firebase
-            if (currentUser) {
-                currentUser.getIdToken(true).catch(() => {
-                    console.warn('Token invalide détecté');
-                    forceLogout();
-                });
-            }
+        // --- HTML TEMPLATE GENERATORS ---
+
+        function getAuthHTML() {
+            return `
+            <div class="auth-container">
+                <div id="loginForm">
+                    <h1>Se connecter</h1>
+                    <div id="loginErrorMessage" class="message error-message hidden"></div>
+                    <div id="loginSuccessMessage" class="message success-message hidden"></div>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group"><input type="email" id="loginEmail" placeholder="Adresse e-mail" required></div>
+                        <div class="form-group"><input type="password" id="loginPassword" placeholder="Mot de passe" required></div>
+                        <button type="submit" class="btn btn-primary btn-full">Se connecter →</button>
+                    </form>
+                    <p class="switch-form-link">Pas de compte ? <a onclick="showRegisterForm()">Créer un compte</a></p>
+                </div>
+                <div id="registerForm" class="register-form hidden">
+                    <h1>Créer un compte</h1>
+                    <div id="registerErrorMessage" class="message error-message hidden"></div>
+                    <form onsubmit="handleRegister(event)">
+                        <div class="form-group"><input type="text" id="registerName" placeholder="Nom complet" required></div>
+                        <div class="form-group"><input type="email" id="registerEmail" placeholder="Adresse e-mail" required></div>
+                        <div class="form-group"><input type="password" id="registerPassword" placeholder="Mot de passe (6+ caractères)" required minlength="6"></div>
+                        <div class="form-group"><input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required minlength="6"></div>
+                        <button type="submit" class="btn btn-primary btn-full">S'inscrire</button>
+                    </form>
+                    <p class="switch-form-link">Déjà un compte ? <a onclick="showLoginForm()">Se connecter</a></p>
+                </div>
+            </div>`;
         }
+        function getDashboardHTML(user) {
+            const userName = user.displayName || user.email.split('@')[0];
+            const userEmail = user.email;
 
-        // Affichage des différentes sections
-        function showAuth() {
-            authContainer.style.display = 'block';
-            dashboardContainer.style.display = 'none';
-            loadingContainer.style.display = 'none';
-        }
-
-        function showDashboard() {
-            if (!sessionValid || !currentUser) {
-                showAuth();
-                return;
-            }
-            
-            authContainer.style.display = 'none';
-            dashboardContainer.style.display = 'block';
-            loadingContainer.style.display = 'none';
-            
-            // Mise à jour des informations utilisateur
-            document.getElementById('userName').textContent = currentUser.displayName || currentUser.email;
-            
-            // Afficher la popup de succès
-            showSuccessPopup(currentUser);
-        }
-
-        function showLoading() {
-            authContainer.style.display = 'none';
-            dashboardContainer.style.display = 'none';
-            loadingContainer.style.display = 'block';
-        }
-
-        function hideLoading() {
-            loadingContainer.style.display = 'none';
-        }
-
-        // Gestion des onglets
-        function showLogin() {
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            document.querySelectorAll('.tab-btn')[1].classList.remove('active');
-            clearMessages();
-        }
-
-        function showRegister() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-            document.querySelectorAll('.tab-btn')[0].classList.remove('active');
-            document.querySelectorAll('.tab-btn')[1].classList.add('active');
-            clearMessages();
-        }
-
-        // Gestion des messages
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.remove('hidden');
-            successMessage.classList.add('hidden');
-        }
-
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-        }
-
-        function clearMessages() {
-            errorMessage.classList.add('hidden');
-            successMessage.classList.add('hidden');
-        }
-
-        // Connexion avec logs détaillés
-        async function handleLogin(event) {
-            event.preventDefault();
-            clearMessages();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            console.log('🔐 Tentative de connexion pour:', email);
-
-            try {
-                showLoading();
-                showSuccess("Connexion en cours...");
-                
-                console.log('🔓 Authentification Firebase...');
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                console.log('✅ Authentification réussie pour:', userCredential.user.uid);
-                console.log('📧 Email vérifié:', userCredential.user.emailVerified);
-
-                if (!userCredential.user.emailVerified) {
-                    console.log('❌ Email non vérifié, déconnexion...');
-                    await auth.signOut();
-                    hideLoading();
-                    showAuth();
+            return `
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Kōzy Coiffure</h2>
+                    <span id="userEmail">${userEmail}</span>
+                </div>
+                <ul class="sidebar-nav">
+                    <li><a href="#" class="nav-link active" onclick="showPanel('overview', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>Dashboard</a></li>
                     
-                    // Proposer de renvoyer l'email
-                    const resend = confirm("Votre email n'est pas encore vérifié.\n\nVoulez-vous qu'on renvoie l'email de vérification ?");
-                    if (resend) {
-                        try {
-                            console.log('📧 Renvoi email de vérification...');
-                            // On doit se reconnecter temporairement pour renvoyer l'email
-                            const tempUser = await auth.signInWithEmailAndPassword(email, password);
-                            await tempUser.user.sendEmailVerification();
-                            await auth.signOut();
-                            console.log('✅ Email de vérification renvoyé');
-                            showSuccess("Email de vérification renvoyé ! Vérifiez votre boîte mail et les spams.");
-                        } catch (resendError) {
-                            console.error('❌ Erreur renvoi email:', resendError);
-                            showError("Erreur lors du renvoi de l'email de vérification.");
-                        }
-                    } else {
-                        showError("Veuillez vérifier votre email avant de vous connecter. Consultez aussi vos spams.");
-                    }
-                    return;
-                }
+                    <!-- NOUVEL AJOUT: Lien vers la page de gestion de l'entreprise -->
+                    <li><a href="#" class="nav-link" onclick="showPanel('company', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5A.75.75 0 0 1 14.25 12h.01a.75.75 0 0 1 .75.75v7.5m0-7.5h2.25a.75.75 0 0 0 .75-.75V7.5a2.25 2.25 0 0 0-2.25-2.25H15M10.5 21V16.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21m-4.5 0H5.625c-.621 0-1.125-.504-1.125-1.125V18.375m12.75 2.625V18.375m0-.625c.621 0 1.125.504 1.125 1.125v2.625h1.125c.621 0 1.125-.504 1.125-1.125V7.5a2.25 2.25 0 0 0-2.25-2.25H6.375a2.25 2.25 0 0 0-2.25 2.25v10.875c0 .621.504 1.125 1.125 1.125h1.125" /></svg>Entreprise</a></li>
+                    
+                    <li><a href="#" class="nav-link" onclick="showPanel('appointments', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18" /></svg>Rendez-vous</a></li>
+                    <li><a href="#" class="nav-link" onclick="showPanel('clients', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.598m-1.5-6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0z" /></svg>Clients</a></li>
+                    <li><a href="#" class="nav-link" onclick="showPanel('products', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>Produits</a></li>
+                    <li><a href="#" class="nav-link" onclick="showPanel('settings', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>Paramètres</a></li>
+                </ul>
+                <button class="btn logout-btn" onclick="handleLogout()">Déconnexion</button>
+            </nav>
+            <main class="main-content">
+                <div id="overview" class="panel active">
+                    <div class="page-header"><h1>Bonjour, <span id="userName">${userName}</span></h1></div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 24px;">
+                        <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon blue"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-3.75-.625m3.75.625V3.375" /></svg></div> Chiffre d'affaires (Mois)</div><div class="kpi-value">2,340€</div><div class="progress-bar"><div style="width: 75%; background-color: var(--primary-blue);"></div></div></div>
+                        <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon green"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div> Nouveaux Clients</div><div class="kpi-value">8</div><div class="progress-bar"><div style="width: 40%; background-color: var(--green);"></div></div></div>
+                        <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon purple"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18" /></svg></div> RDV du jour</div><div class="kpi-value">4</div><div class="progress-bar"><div style="width: 80%; background-color: var(--purple);"></div></div></div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 24px;">
+                        <div class="chart-container" style="grid-column: 1 / -1; @media (min-width: 1024px) { grid-column: 1 / 2; }"><h3>Évolution des revenus</h3><div id="revenue-chart"></div></div>
+                        <div class="chart-container" style="grid-column: 1 / -1; @media (min-width: 1024px) { grid-column: 2 / 3; }"><h3>Répartition des Services</h3><div id="services-chart"></div></div>
+                    </div>
+                </div>
 
-                console.log('💾 Enregistrement session...');
-                // Enregistrement de la connexion en base
-                await db.collection('user_sessions').doc(userCredential.user.uid).set({
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                    ipAddress: 'detected_by_server',
-                    userAgent: navigator.userAgent,
-                    loginSuccess: true
-                });
-                console.log('✅ Session enregistrée');
+                <!-- NOUVEL AJOUT: Panneau vide pour la gestion de l'entreprise -->
+                <div id="company" class="panel hidden">
+                    <div class="page-header">
+                        <h1>Mon Entreprise</h1>
+                    </div>
+                    <p style="color: var(--text-secondary);">Le formulaire de création et de gestion de votre entreprise sera disponible ici prochainement.</p>
+                    <!-- Le contenu de cette page sera ajouté ultérieurement. -->
+                </div>
 
-                console.log('🎉 Connexion réussie ! Redirection vers dashboard...');
+                <div id="appointments" class="panel hidden"><div class="page-header"><h1>Rendez-vous</h1><button class="btn btn-primary">Ajouter un RDV</button></div><div class="table-wrapper"><table><thead><tr><th>Client</th><th>Service</th><th>Date & Heure</th><th>Statut</th><th>Actions</th></tr></thead><tbody><tr><td>Marie Dubois</td><td>Coupe & Brushing</td><td>Aujourd'hui, 14:30</td><td><span class="status-badge yellow">Confirmé</span></td><td><button class="btn btn-secondary">Éditer</button></td></tr><tr><td>Julien Petit</td><td>Coupe Homme</td><td>Aujourd'hui, 16:00</td><td><span class="status-badge yellow">Confirmé</span></td><td><button class="btn btn-secondary">Éditer</button></td></tr><tr><td>Aline Bernard</td><td>Couleur</td><td>Demain, 10:00</td><td><span class="status-badge green">Terminé</span></td><td><button class="btn btn-secondary">Éditer</button></td></tr></tbody></table></div></div>
+                <div id="clients" class="panel hidden"><div class="page-header"><h1>Clients</h1><button class="btn btn-primary">Ajouter un Client</button></div><div class="table-wrapper"><table><thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Dernière Visite</th><th>Actions</th></tr></thead><tbody><tr><td>Marie Dubois</td><td>marie.d@example.com</td><td>06 12 34 56 78</td><td>12/03/2024</td><td><button class="btn btn-secondary">Voir</button></td></tr><tr><td>Julien Petit</td><td>julien.p@example.com</td><td>06 87 65 43 21</td><td>10/03/2024</td><td><button class="btn btn-secondary">Voir</button></td></tr></tbody></table></div></div>
+                <div id="products" class="panel hidden"><div class="page-header"><h1>Produits</h1><button class="btn btn-primary">Ajouter un Produit</button></div><div class="table-wrapper"><table><thead><tr><th>Produit</th><th>SKU</th><th>Stock</th><th>Prix</th><th>Actions</th></tr></thead><tbody><tr><td>Shampoing Hydratant</td><td>SH-HY-250</td><td>48</td><td>22.50€</td><td><button class="btn btn-secondary">Éditer</button></td></tr><tr><td>Masque Réparateur</td><td>MK-RP-150</td><td>23</td><td>35.00€</td><td><button class="btn btn-secondary">Éditer</button></td></tr></tbody></table></div></div>
                 
-                // Petit délai pour laisser le temps au message de s'afficher
-                setTimeout(() => {
-                    hideLoading();
-                    // Le showDashboard() sera appelé automatiquement par onAuthStateChanged
-                    // qui détectera le changement d'état et affichera la popup
-                }, 1000);
-                
-            } catch (error) {
-                console.error('❌ Erreur connexion:', error);
-                console.error('❌ Code erreur:', error.code);
-                console.error('❌ Message:', error.message);
-                
-                hideLoading();
-                showAuth();
-                
-                // Messages d'erreur détaillés
-                let errorMessage = getErrorMessage(error.code);
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage += " Vous devez d'abord créer un compte.";
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage += " Vérifiez votre mot de passe.";
-                }
-                
-                showError(`${errorMessage} (Code: ${error.code})`);
-            }
+                <div id="settings" class="panel hidden">
+                    <div class="page-header"><h1>Paramètres</h1></div>
+                    
+                    <div class="kpi-card">
+                        <h3>Profil</h3>
+                        <form><div class="form-grid"><div class="form-group col-span-1"><label>Nom d'affichage</label><br><input type="text" value="${userName}" style="margin-top:8px;"></div><div class="form-group col-span-1"><label>Email</label><br><input type="email" value="${userEmail}" disabled style="margin-top:8px;"></div><div class="form-group"><label>Nouveau mot de passe</label><br><input type="password" placeholder="Laisser vide pour ne pas changer" style="margin-top:8px;"></div></div><hr style="border-color: var(--border-color); margin: 24px 0;"><div class="toggle-switch"><p>Notifications par email</p><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div><hr style="border-color: var(--border-color); margin: 24px 0;"><div style="display: flex; justify-content: space-between; align-items: center;"><button type="button" class="btn btn-danger">Supprimer le compte</button><button type="submit" class="btn btn-primary">Sauvegarder les changements</button></div></form>
+                    </div>
+
+                    <div class="kpi-card appearance-card">
+                        <h3>Personnalisation de l'apparence</h3>
+                        <p style="color: var(--text-secondary); margin-top: 4px; margin-bottom: 20px;">Créez l'environnement de travail qui vous convient.</p>
+                        <div class="appearance-control">
+                            <button class="btn btn-secondary" onclick="toggleAppearanceDropdown(event)">
+                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402a3.75 3.75 0 00-5.304-5.304L4.098 14.6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 5.25c0 7.22-5.84 13.06-13.06 13.06" /></svg>
+                                Thème et Arrière-plan
+                            </button>
+                            <div id="appearanceDropdown" class="settings-dropdown hidden">
+                                <div class="dropdown-section">
+                                    <div class="dropdown-section-title">Thème</div>
+                                    <div class="theme-selector">
+                                        <button id="theme-btn-dark" class="theme-btn active" onclick="applyAndSaveTheme('dark')">Sombre</button>
+                                        <button id="theme-btn-light" class="theme-btn" onclick="applyAndSaveTheme('light')">Clair</button>
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-section">
+                                    <div class="dropdown-section-title">Arrière-plan</div>
+                                    <div class="dropdown-item" onclick="openAppearancePopup('color')">Couleur unie</div>
+                                    <div class="dropdown-item" onclick="openAppearancePopup('gradient')">Dégradé</div>
+                                    <div class="dropdown-item" onclick="openAppearancePopup('url')">Image via lien</div>
+                                    <div class="dropdown-item" onclick="openAppearancePopup('upload')">Uploader une image</div>
+                                    <div class="dropdown-item" onclick="openAppearancePopup('default')">Fonds par défaut</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>`;
         }
-
-        // Inscription avec logs détaillés
-        async function handleRegister(event) {
-            event.preventDefault();
-            clearMessages();
-            
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            console.log('🚀 Début inscription pour:', email);
-
-            if (password !== confirmPassword) {
-                showError("Les mots de passe ne correspondent pas.");
-                return;
-            }
-
-            if (password.length < 6) {
-                showError("Le mot de passe doit contenir au moins 6 caractères.");
-                return;
-            }
-
-            try {
-                showLoading();
-                showSuccess("Création du compte en cours...");
-                
-                console.log('📝 Création utilisateur Firebase...');
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                console.log('✅ Utilisateur créé avec succès:', userCredential.user.uid);
-                
-                // Mise à jour du profil
-                console.log('👤 Mise à jour du profil...');
-                await userCredential.user.updateProfile({
-                    displayName: name
-                });
-                console.log('✅ Profil mis à jour');
-
-                // Configuration pour l'envoi d'email
-                const actionCodeSettings = {
-                    url: window.location.origin, // URL de retour après vérification
-                    handleCodeInApp: false
-                };
-
-                console.log('📧 Envoi email de vérification...');
-                console.log('📧 Email destinataire:', email);
-                console.log('📧 Configuration:', actionCodeSettings);
-                
-                // Envoi de l'email de vérification avec configuration
-                await userCredential.user.sendEmailVerification(actionCodeSettings);
-                console.log('✅ Email de vérification envoyé avec succès !');
-
-                // Création du profil utilisateur en base
-                console.log('💾 Création profil en base de données...');
-                await db.collection('users').doc(userCredential.user.uid).set({
-                    name: name,
-                    email: email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    role: 'admin',
-                    emailVerified: false,
-                    registrationCompleted: true
-                });
-                console.log('✅ Profil sauvegardé en base');
-
-                // Log détaillé de l'utilisateur créé
-                console.log('👤 Détails utilisateur:', {
-                    uid: userCredential.user.uid,
-                    email: userCredential.user.email,
-                    emailVerified: userCredential.user.emailVerified,
-                    displayName: userCredential.user.displayName
-                });
-
-                // Déconnexion temporaire jusqu'à vérification
-                console.log('🚪 Déconnexion temporaire...');
-                await auth.signOut();
-                
-                hideLoading();
-                showAuth();
-                showLogin();
-                showSuccess(`✅ Inscription réussie ! Un email de vérification a été envoyé à ${email}. Vérifiez aussi vos spams. Une fois vérifié, vous pourrez vous connecter.`);
-                
-                // Alert supplémentaire pour être sûr
-                setTimeout(() => {
-                    alert(`Email de vérification envoyé à ${email}!\n\nVérifiez:\n- Votre boîte de réception\n- Le dossier spam/courrier indésirable\n- Attendez quelques minutes si nécessaire`);
-                }, 1000);
-                
-            } catch (error) {
-                console.error('❌ Erreur inscription:', error);
-                console.error('❌ Code erreur:', error.code);
-                console.error('❌ Message:', error.message);
-                
-                hideLoading();
-                showAuth();
-                showError(`Erreur: ${getErrorMessage(error.code)} (Code: ${error.code})`);
-            }
-        }
-
-        // Déconnexion
-        async function handleLogout() {
-            try {
-                await auth.signOut();
-                currentUser = null;
-                sessionValid = false;
-                showAuth();
-                showSuccess("Déconnexion réussie.");
-            } catch (error) {
-                showError("Erreur lors de la déconnexion.");
-            }
-        }
-
-        // Déconnexion forcée
-        function forceLogout() {
-            auth.signOut();
-            currentUser = null;
-            sessionValid = false;
-            showAuth();
-            showError("Session expirée ou non sécurisée. Veuillez vous reconnecter.");
-        }
-
-        // Messages d'erreur Firebase avec plus de détails
-        function getErrorMessage(errorCode) {
-            const messages = {
-                'auth/user-not-found': 'Aucun compte trouvé avec cet email',
-                'auth/wrong-password': 'Mot de passe incorrect',
-                'auth/email-already-in-use': 'Cet email est déjà utilisé par un autre compte',
-                'auth/weak-password': 'Le mot de passe doit contenir au moins 6 caractères',
-                'auth/invalid-email': 'Format d\'email invalide',
-                'auth/too-many-requests': 'Trop de tentatives. Réessayez dans quelques minutes',
-                'auth/user-disabled': 'Ce compte a été désactivé',
-                'auth/operation-not-allowed': 'Méthode de connexion non autorisée',
-                'auth/network-request-failed': 'Erreur de connexion réseau',
-                'auth/requires-recent-login': 'Veuillez vous reconnecter pour cette action',
-                'auth/invalid-credential': 'Identifiants invalides',
-                'auth/user-token-expired': 'Session expirée, reconnectez-vous'
+        
+        // --- CHART INITIALIZATION ---
+        function initDashboardCharts() {
+            const chartBaseOptions = {
+                chart: { background: 'transparent', toolbar: { show: false }, animations: { easing: 'easeout', speed: 800 } },
+                theme: { mode: document.documentElement.getAttribute('data-theme') || 'dark' },
+                stroke: { curve: 'smooth', width: 3 },
+                grid: { borderColor: 'rgba(55, 65, 81, 0.5)', strokeDashArray: 4 },
+                dataLabels: { enabled: false },
+                tooltip: { theme: 'dark' },
+                markers: { strokeWidth: 4, strokeOpacity: 0.8, hover: { size: 9 } }
             };
-            return messages[errorCode] || `Erreur inconnue: ${errorCode}. Vérifiez la console pour plus de détails.`;
+
+            const revenueOptions = {
+                ...chartBaseOptions, series: [{ name: "Revenus", data: [1200, 1400, 1300, 1500, 1800, 1750, 2100, 2340] }],
+                chart: { ...chartBaseOptions.chart, type: 'area', height: 350 },
+                colors: [getComputedStyle(document.documentElement).getPropertyValue('--primary-blue').trim()],
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.1, stops: [0, 90, 100] } },
+                xaxis: { categories: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août"], labels: { style: { colors: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() } } },
+                yaxis: { labels: { formatter: (val) => `€${val}`, style: { colors: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() } } },
+            };
+            if(charts.revenue) charts.revenue.destroy();
+            charts.revenue = new ApexCharts(document.querySelector("#revenue-chart"), revenueOptions);
+            charts.revenue.render();
+
+            const servicesOptions = {
+                ...chartBaseOptions, series: [44, 55, 21],
+                chart: { ...chartBaseOptions.chart, type: 'donut', height: 350 },
+                labels: ['Coupes', 'Couleurs', 'Soins'],
+                colors: [
+                    getComputedStyle(document.documentElement).getPropertyValue('--primary-blue').trim(), 
+                    getComputedStyle(document.documentElement).getPropertyValue('--purple').trim(), 
+                    getComputedStyle(document.documentElement).getPropertyValue('--green').trim()
+                ],
+                legend: { position: 'bottom', markers: { radius: 12 }, labels: { colors: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() } },
+                plotOptions: { pie: { donut: { labels: { show: true, total: { show: true, label: 'Total Services', color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim(), formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0) }, value: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim() } } } } }
+            };
+            if(charts.services) charts.services.destroy();
+            charts.services = new ApexCharts(document.querySelector("#services-chart"), servicesOptions);
+            charts.services.render();
         }
+        
+        // --- HANDLERS ---
+        const handleLogin = async (e) => { e.preventDefault(); try { const cred = await auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value); if (!cred.user.emailVerified) { await auth.signOut(); showMessage('Error', 'login', 'Email non vérifié. Consultez vos emails.'); } } catch (err) { showMessage('Error', 'login', getFriendlyErrorMessage(err.code)); } };
+        const handleRegister = async (e) => { e.preventDefault(); if (document.getElementById('registerPassword').value !== document.getElementById('confirmPassword').value) return showMessage('Error', 'register', 'Les mots de passe ne correspondent pas.'); try { const cred = await auth.createUserWithEmailAndPassword(document.getElementById('registerEmail').value, document.getElementById('registerPassword').value); await cred.user.updateProfile({ displayName: document.getElementById('registerName').value }); await cred.user.sendEmailVerification(); await auth.signOut(); showLoginForm(); showMessage('Success', 'login', 'Inscription réussie ! Un email de vérification a été envoyé.'); } catch (err) { showMessage('Error', 'register', getFriendlyErrorMessage(err.code)); } };
+        const handleLogout = () => { showToast('Déconnexion réussie.', 'info'); setTimeout(() => auth.signOut(), 500); };
+        
+        // --- UI UTILS ---
+        const showToast = (message, type = 'info') => {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast--${type}`;
+            const iconSvg = type === 'success' ? `<svg class="toast-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` : `<svg class="toast-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            toast.innerHTML = `${iconSvg}<div>${message}</div>`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => { toast.classList.add('hiding'); toast.addEventListener('animationend', () => toast.remove()); }, 5000);
+        };
+        
+        const showLoginForm = () => { document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('registerForm').classList.add('hidden'); clearMessages(); };
+        const showRegisterForm = () => { document.getElementById('loginForm').classList.add('hidden'); document.getElementById('registerForm').classList.remove('hidden'); clearMessages(); };
+        const showPanel = (panelId, link) => { document.querySelectorAll('.panel').forEach(p => { p.classList.add('hidden'); p.classList.remove('active'); }); document.getElementById(panelId).classList.remove('hidden'); document.getElementById(panelId).classList.add('active'); document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); link.classList.add('active'); };
+        const showMessage = (type, form, msg) => { const el = document.getElementById(`${form}${type}Message`); el.textContent = msg; el.classList.remove('hidden'); };
+        const clearMessages = () => document.querySelectorAll('.message').forEach(el => el.classList.add('hidden'));
+        const getFriendlyErrorMessage = (c) => ({'auth/user-not-found':'Email non trouvé.','auth/wrong-password':'Mot de passe incorrect.','auth/email-already-in-use':'Cet email est déjà utilisé.','auth/weak-password':'Le mot de passe doit faire au moins 6 caractères.'}[c]||'Une erreur est survenue.');
+    
+        // --- CUSTOMIZATION FUNCTIONS ---
 
-        // Fonction de diagnostic Firebase
-        function runFirebaseTests() {
-            console.log('🧪 === DIAGNOSTIC FIREBASE ===');
-            console.log('📊 Configuration actuelle:', firebaseConfig);
-            console.log('🔥 Firebase initialisé:', !!firebase.apps.length);
-            console.log('🔐 Auth disponible:', !!auth);
-            console.log('💾 Firestore disponible:', !!db);
-            console.log('🌐 URL actuelle:', window.location.href);
-            console.log('👤 Utilisateur actuel:', currentUser ? currentUser.email : 'Aucun');
-            console.log('✅ Session valide:', sessionValid);
-            
-            // Test de connexion Firebase
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    console.log('🔍 Test utilisateur actuel:', {
-                        email: user.email,
-                        verified: user.emailVerified,
-                        uid: user.uid
-                    });
-                }
-            });
-        }
-
-        // Lancer le diagnostic au chargement (optionnel)
-        setTimeout(runFirebaseTests, 2000);
-
-        // Protection contre les outils de développement (basique)
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                e.preventDefault();
-                showError("Les outils de développement sont désactivés pour des raisons de sécurité.");
-                return false;
+        async function saveUserSettings(settings) {
+            const user = auth.currentUser;
+            if (!user) return;
+            try {
+                await db.collection('users').doc(user.uid).set({ settings }, { merge: true });
+                currentUserSettings = { ...currentUserSettings, ...settings };
+            } catch (error) {
+                console.error("Erreur lors de la sauvegarde des paramètres:", error);
+                showToast("Impossible de sauvegarder les paramètres.", "error");
             }
-        });
+        }
 
-        // Protection contre le clic droit
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
-        });
+        async function loadAndApplyUserSettings(user) {
+            const defaultSettings = {
+                theme: 'dark',
+                background: { type: 'default', value: 'var(--body-bg)' }
+            };
 
-        // Détection de la tentative de manipulation du DOM
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    const target = mutation.target;
-                    if (target.id === 'dashboardContainer' && target.style.display === 'block' && !sessionValid) {
-                        target.style.display = 'none';
-                        forceLogout();
-                    }
+            if (!user) {
+                applyUserSettings(defaultSettings);
+                return;
+            }
+
+            try {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists && doc.data().settings) {
+                    currentUserSettings = { ...defaultSettings, ...doc.data().settings };
+                } else {
+                    currentUserSettings = defaultSettings;
                 }
-            });
-        });
+                applyUserSettings(currentUserSettings);
+            } catch (error) {
+                console.error("Erreur lors du chargement des paramètres:", error);
+                applyUserSettings(defaultSettings);
+            }
+        }
 
-        observer.observe(document.body, {
-            attributes: true,
-            childList: true,
-            subtree: true
-        });
+        function applyUserSettings(settings) {
+            document.documentElement.setAttribute('data-theme', settings.theme);
+            if (document.querySelector('#theme-btn-dark')) {
+                document.querySelector('#theme-btn-dark').classList.toggle('active', settings.theme === 'dark');
+                document.querySelector('#theme-btn-light').classList.toggle('active', settings.theme === 'light');
+            }
+            applyBackground(settings.background);
+            if (Object.keys(charts).length > 0) initDashboardCharts();
+        }
+
+        function applyBackground(bg) {
+            if (!bg) return;
+            let bgStyle = '';
+            switch (bg.type) {
+                case 'color': bgStyle = bg.value; break;
+                case 'gradient': bgStyle = `linear-gradient(${bg.angle || '45'}deg, ${bg.color1}, ${bg.color2})`; break;
+                case 'url': bgStyle = `url('${bg.value}')`; break;
+                case 'default':
+                default:
+                    document.body.style.backgroundImage = 'none';
+                    document.body.style.backgroundColor = 'var(--body-bg)';
+                    return;
+            }
+            document.body.style.backgroundImage = bgStyle;
+            document.body.style.backgroundColor = 'transparent';
+        }
+
+        async function applyAndSaveTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelector('#theme-btn-dark').classList.toggle('active', theme === 'dark');
+            document.querySelector('#theme-btn-light').classList.toggle('active', theme === 'light');
+            await saveUserSettings({ theme });
+            initDashboardCharts();
+            showToast(`Thème ${theme === 'dark' ? 'sombre' : 'clair'} appliqué.`, 'info');
+        }
+
+        function toggleAppearanceDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('appearanceDropdown');
+            dropdown.classList.toggle('hidden');
+            if (!dropdown.classList.contains('hidden')) {
+                document.addEventListener('click', closeAppearanceDropdownOnClickOutside, { once: true });
+            }
+        }
+
+        function closeAppearanceDropdownOnClickOutside(event) {
+            const dropdown = document.getElementById('appearanceDropdown');
+            if (dropdown && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        }
+        
+        function openAppearancePopup(type) {
+            closePopup();
+            const popupRoot = document.getElementById('popup-root');
+            let title = '', bodyContent = '', onSave = () => {};
+
+            switch(type) {
+                case 'color':
+                    title = "Choisir une couleur unie";
+                    bodyContent = `<div class="form-group"><label for="bgColor">Couleur de fond</label><input type="color" id="bgColor" value="${currentUserSettings.background?.type === 'color' ? currentUserSettings.background.value : '#111827'}" style="width: 100%; height: 50px; padding: 5px;"></div>`;
+                    onSave = () => { const newBg = { type: 'color', value: document.getElementById('bgColor').value }; applyBackground(newBg); saveUserSettings({ background: newBg }); };
+                    break;
+                case 'gradient':
+                    title = "Créer un dégradé";
+                    bodyContent = `<div class="form-group"><label for="gradColor1">Couleur 1</label><input type="color" id="gradColor1" value="${currentUserSettings.background?.color1 || '#8b5cf6'}"></div><div class="form-group"><label for="gradColor2">Couleur 2</label><input type="color" id="gradColor2" value="${currentUserSettings.background?.color2 || '#3b82f6'}"></div>`;
+                    onSave = () => { const newBg = { type: 'gradient', color1: document.getElementById('gradColor1').value, color2: document.getElementById('gradColor2').value }; applyBackground(newBg); saveUserSettings({ background: newBg }); };
+                    break;
+                case 'url':
+                    title = "Image depuis une URL";
+                    bodyContent = `<div class="form-group"><label for="bgUrl">URL de l'image</label><input type="text" id="bgUrl" placeholder="https://exemple.com/image.jpg" value="${currentUserSettings.background?.type === 'url' ? currentUserSettings.background.value : ''}"></div>`;
+                    onSave = () => { const value = document.getElementById('bgUrl').value; if (!value) return showToast("Veuillez entrer une URL valide.", "error"); const newBg = { type: 'url', value }; applyBackground(newBg); saveUserSettings({ background: newBg }); };
+                    break;
+                case 'upload':
+                    title = "Uploader une image";
+                    bodyContent = `<p>Cette fonctionnalité est en cours de développement.</p>`;
+                    onSave = () => showToast("Fonctionnalité non implémentée.", "info");
+                    break;
+                case 'default':
+                    title = "Restaurer l'arrière-plan par défaut";
+                    bodyContent = `<p>Êtes-vous sûr de vouloir réinitialiser l'arrière-plan ?</p>`;
+                    onSave = () => { const newBg = { type: 'default', value: 'var(--body-bg)' }; applyBackground(newBg); saveUserSettings({ background: newBg }); };
+                    break;
+            }
+            
+            const popupHTML = `
+                <div class="popup-overlay" onclick="closePopup()">
+                    <div class="popup-container" onclick="event.stopPropagation()">
+                        <div class="popup-header"><h3>${title}</h3><button class="close-btn" onclick="closePopup()">×</button></div>
+                        <div class="popup-body">${bodyContent}</div>
+                        <div class="popup-footer">
+                            <button class="btn btn-secondary" onclick="closePopup()">Annuler</button>
+                            <button class="btn btn-primary" id="popupSaveBtn">Appliquer</button>
+                        </div>
+                    </div>
+                </div>`;
+            popupRoot.innerHTML = popupHTML;
+            document.getElementById('popupSaveBtn').onclick = () => { onSave(); closePopup(); showToast("Arrière-plan mis à jour.", "success"); };
+        }
+
+        function closePopup() {
+            const popupRoot = document.getElementById('popup-root');
+            if (popupRoot) popupRoot.innerHTML = '';
+        }
+
+        // Initialisation de l'UI
+        setUIState('AUTH');
     </script>
 </body>
 </html>
