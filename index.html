@@ -82,10 +82,11 @@
         .auth-container h1 { text-align: center; margin-bottom: 32px; }
         .form-group { position: relative; margin-bottom: 20px; }
         .register-form .form-group { margin-bottom: 24px; }
-        input { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 16px; background: var(--bg-light); color: var(--text-main); transition: all 0.3s ease; }
+        input, select, textarea { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 16px; background: var(--bg-light); color: var(--text-main); transition: all 0.3s ease; font-family: 'Inter', sans-serif; }
         input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px var(--bg-light) inset !important; -webkit-text-fill-color: var(--text-main) !important; }
-        input:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
         .btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
         .btn-full { width: 100%; padding: 16px; }
         .btn-primary { background-color: var(--primary-blue); color: white; }
         .btn-secondary { background-color: var(--bg-light); color: var(--text-main); border: 1px solid var(--border-color); }
@@ -107,6 +108,8 @@
         .toast--success .toast-icon { color: var(--green); }
         .toast--info { border-left: 4px solid var(--primary-blue); }
         .toast--info .toast-icon { color: var(--primary-blue); }
+        .toast--error { border-left: 4px solid var(--red); }
+        .toast--error .toast-icon { color: var(--red); }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
         
@@ -153,11 +156,14 @@
         .chart-container h3 { margin-bottom: 16px; font-weight: 600; }
         
         table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        th, td { padding: 16px; text-align: left; }
+        th, td { padding: 16px; text-align: left; vertical-align: middle; }
         th { color: var(--text-secondary); }
         tbody tr { transition: background-color 0.2s ease; }
         tbody tr:hover { background-color: rgba(55, 65, 81, 0.3); }
         [data-theme="light"] tbody tr:hover { background-color: rgba(209, 213, 219, 0.5); }
+        td a { color: var(--primary-blue); text-decoration: none; }
+        td a:hover { text-decoration: underline; }
+        td .btn { margin-right: 8px; }
         
         .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
         .status-badge.green { background-color: rgba(16, 185, 129, 0.2); color: var(--green); }
@@ -191,93 +197,50 @@
             animation: fadeIn 0.2s ease-out;
         }
         .dropdown-section { padding: 8px; }
-        .dropdown-section-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 0 8px 8px 8px;
-        }
-        .theme-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        .theme-btn {
-            padding: 10px;
-            border-radius: 8px;
-            border: 2px solid var(--border-color);
-            background-color: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-        .theme-btn:hover {
-            border-color: var(--primary-blue);
-            color: var(--text-main);
-        }
-        .theme-btn.active {
-            border-color: var(--primary-blue);
-            background-color: rgba(59, 130, 246, 0.1);
-            color: var(--primary-blue);
-            font-weight: 600;
-        }
-        .dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
+        .dropdown-section-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 8px 8px 8px; }
+        .theme-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .theme-btn { padding: 10px; border-radius: 8px; border: 2px solid var(--border-color); background-color: transparent; color: var(--text-secondary); cursor: pointer; text-align: center; transition: all 0.2s ease; }
+        .theme-btn:hover { border-color: var(--primary-blue); color: var(--text-main); }
+        .theme-btn.active { border-color: var(--primary-blue); background-color: rgba(59, 130, 246, 0.1); color: var(--primary-blue); font-weight: 600; }
+        .dropdown-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s ease; }
         .dropdown-item:hover { background-color: var(--bg-glass); }
         .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 8px; }
 
         .popup-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px);
+            z-index: 1000; display: flex; justify-content: center; align-items: center;
             animation: fadeIn 0.3s ease-out;
         }
         .popup-container {
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            background: var(--bg-dark); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 24px; width: 90%;
+            max-width: 500px; box-shadow: 0 15px 40px rgba(0,0,0,0.5);
             animation: slideInUp 0.4s ease-out;
         }
+        .popup-container.large { max-width: 800px; }
         @keyframes slideInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .popup-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
+        .popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .popup-header h3 { font-size: 20px; font-weight: 600; }
         .popup-header .close-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 24px; line-height: 1; padding: 0; }
         .popup-body .form-group { margin-bottom: 16px; }
         .popup-body label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px; }
-        .popup-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-color);
+        .popup-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+        
+        .tool-category-grid, .tool-card-grid {
+            display: grid;
+            gap: 16px;
         }
+        .tool-category-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        .tool-card-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); max-height: 60vh; overflow-y: auto; padding-right: 10px; }
+        .tool-card {
+            background-color: var(--bg-light); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 16px; display: flex; flex-direction: column;
+        }
+        .tool-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background-color: var(--border-color); }
+        .tool-card h4 { font-size: 16px; margin-bottom: 8px; }
+        .tool-card p { font-size: 14px; color: var(--text-secondary); flex-grow: 1; margin-bottom: 16px; }
+        .tool-card a { margin-top: auto; text-align: center; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -310,6 +273,22 @@
         const authWrapper = document.getElementById('authWrapper');
         const dashboardWrapper = document.getElementById('dashboardWrapper');
 
+        // --- MOCK DATA ---
+        let clientsData = [
+            { id: 1, name: "Marie Dubois", email: "marie.d@example.com", phone: "0612345678", lastVisit: "2024-03-12", details: "Cliente régulière, préfère les produits sans sulfates. Allergique à l'amoniaque." },
+            { id: 2, name: "Julien Petit", email: "julien.p@example.com", phone: "0687654321", lastVisit: "2024-03-10", details: "Vient pour une coupe homme toutes les 3 semaines." },
+            { id: 3, name: "Aline Bernard", email: "aline.b@example.com", phone: "0611223344", lastVisit: "2024-04-01", details: "A fait une couleur rousse récemment, attention aux produits décolorants." },
+        ];
+        let appointmentsData = [
+            { id: 1, clientId: 1, service: "Coupe & Brushing", datetime: "Aujourd'hui, 14:30", status: "Confirmé" },
+            { id: 2, clientId: 2, service: "Coupe Homme", datetime: "Aujourd'hui, 16:00", status: "Confirmé" },
+            { id: 3, clientId: 3, service: "Couleur", datetime: "Demain, 10:00", status: "Terminé" },
+        ];
+        let productsData = [
+            { id: 1, name: "Shampoing Hydratant", sku: "SH-HY-250", stock: 48, price: 22.50 },
+            { id: 2, name: "Masque Réparateur", sku: "MK-RP-150", stock: 23, price: 35.00 },
+        ];
+
         // --- STATE MANAGEMENT ---
         async function setUIState(state, user = null) {
             if (state === currentAppState) return;
@@ -320,6 +299,7 @@
                 dashboardWrapper.classList.remove('hidden');
                 authWrapper.classList.add('hidden');
                 initDashboardCharts();
+                initDashboardData();
                 await loadAndApplyUserSettings(user);
                 showToast(`Bienvenue, ${user.displayName || user.email.split('@')[0]} !`, 'success');
             } else { // 'AUTH' state
@@ -377,10 +357,7 @@
                 </div>
                 <ul class="sidebar-nav">
                     <li><a href="#" class="nav-link active" onclick="showPanel('overview', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>Dashboard</a></li>
-                    
-                    <!-- NOUVEL AJOUT: Lien vers la page de gestion de l'entreprise -->
                     <li><a href="#" class="nav-link" onclick="showPanel('company', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5A.75.75 0 0 1 14.25 12h.01a.75.75 0 0 1 .75.75v7.5m0-7.5h2.25a.75.75 0 0 0 .75-.75V7.5a2.25 2.25 0 0 0-2.25-2.25H15M10.5 21V16.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21m-4.5 0H5.625c-.621 0-1.125-.504-1.125-1.125V18.375m12.75 2.625V18.375m0-.625c.621 0 1.125.504 1.125 1.125v2.625h1.125c.621 0 1.125-.504 1.125-1.125V7.5a2.25 2.25 0 0 0-2.25-2.25H6.375a2.25 2.25 0 0 0-2.25 2.25v10.875c0 .621.504 1.125 1.125 1.125h1.125" /></svg>Entreprise</a></li>
-                    
                     <li><a href="#" class="nav-link" onclick="showPanel('appointments', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18" /></svg>Rendez-vous</a></li>
                     <li><a href="#" class="nav-link" onclick="showPanel('clients', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.598m-1.5-6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0z" /></svg>Clients</a></li>
                     <li><a href="#" class="nav-link" onclick="showPanel('products', this)"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>Produits</a></li>
@@ -393,7 +370,7 @@
                     <div class="page-header"><h1>Bonjour, <span id="userName">${userName}</span></h1></div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 24px;">
                         <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon blue"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-3.75-.625m3.75.625V3.375" /></svg></div> Chiffre d'affaires (Mois)</div><div class="kpi-value">2,340€</div><div class="progress-bar"><div style="width: 75%; background-color: var(--primary-blue);"></div></div></div>
-                        <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon green"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div> Nouveaux Clients</div><div class="kpi-value">8</div><div class="progress-bar"><div style="width: 40%; background-color: var(--green);"></div></div></div>
+                        <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon green"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div> Nouveaux Clients</div><div class="kpi-value">${clientsData.length}</div><div class="progress-bar"><div style="width: 40%; background-color: var(--green);"></div></div></div>
                         <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon purple"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18" /></svg></div> RDV du jour</div><div class="kpi-value">4</div><div class="progress-bar"><div style="width: 80%; background-color: var(--purple);"></div></div></div>
                     </div>
                     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 24px;">
@@ -402,27 +379,39 @@
                     </div>
                 </div>
 
-                <!-- NOUVEL AJOUT: Panneau vide pour la gestion de l'entreprise -->
                 <div id="company" class="panel hidden">
-                    <div class="page-header">
-                        <h1>Mon Entreprise</h1>
+                    <div class="page-header"><h1>Mon Entreprise</h1></div>
+                    <div class="kpi-card">
+                        <h3>Outils pour votre entreprise</h3>
+                        <p style="color: var(--text-secondary); margin-top: 4px; margin-bottom: 20px;">
+                            Découvrez une sélection d'outils pour vous aider à gérer et développer votre activité.
+                        </p>
+                        <button class="btn btn-primary" onclick="openToolsHubPopup()">
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.562L16.25 22.5l-.648-1.938a3.375 3.375 0 00-2.672-2.672L11.25 18l1.938-.648a3.375 3.375 0 002.672-2.672L16.25 13.5l.648 1.938a3.375 3.375 0 002.672 2.672L21 18l-1.938.648a3.375 3.375 0 00-2.672 2.672z"></path></svg>
+                            Parcourir les outils
+                        </button>
                     </div>
-                    <p style="color: var(--text-secondary);">Le formulaire de création et de gestion de votre entreprise sera disponible ici prochainement.</p>
-                    <!-- Le contenu de cette page sera ajouté ultérieurement. -->
                 </div>
 
-                <div id="appointments" class="panel hidden"><div class="page-header"><h1>Rendez-vous</h1><button class="btn btn-primary">Ajouter un RDV</button></div><div class="table-wrapper"><table><thead><tr><th>Client</th><th>Service</th><th>Date & Heure</th><th>Statut</th><th>Actions</th></tr></thead><tbody><tr><td>Marie Dubois</td><td>Coupe & Brushing</td><td>Aujourd'hui, 14:30</td><td><span class="status-badge yellow">Confirmé</span></td><td><button class="btn btn-secondary">Éditer</button></td></tr><tr><td>Julien Petit</td><td>Coupe Homme</td><td>Aujourd'hui, 16:00</td><td><span class="status-badge yellow">Confirmé</span></td><td><button class="btn btn-secondary">Éditer</button></td></tr><tr><td>Aline Bernard</td><td>Couleur</td><td>Demain, 10:00</td><td><span class="status-badge green">Terminé</span></td><td><button class="btn btn-secondary">Éditer</button></td></tr></tbody></table></div></div>
-                <div id="clients" class="panel hidden"><div class="page-header"><h1>Clients</h1><button class="btn btn-primary">Ajouter un Client</button></div><div class="table-wrapper"><table><thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Dernière Visite</th><th>Actions</th></tr></thead><tbody><tr><td>Marie Dubois</td><td>marie.d@example.com</td><td>06 12 34 56 78</td><td>12/03/2024</td><td><button class="btn btn-secondary">Voir</button></td></tr><tr><td>Julien Petit</td><td>julien.p@example.com</td><td>06 87 65 43 21</td><td>10/03/2024</td><td><button class="btn btn-secondary">Voir</button></td></tr></tbody></table></div></div>
-                <div id="products" class="panel hidden"><div class="page-header"><h1>Produits</h1><button class="btn btn-primary">Ajouter un Produit</button></div><div class="table-wrapper"><table><thead><tr><th>Produit</th><th>SKU</th><th>Stock</th><th>Prix</th><th>Actions</th></tr></thead><tbody><tr><td>Shampoing Hydratant</td><td>SH-HY-250</td><td>48</td><td>22.50€</td><td><button class="btn btn-secondary">Éditer</button></td></tr><tr><td>Masque Réparateur</td><td>MK-RP-150</td><td>23</td><td>35.00€</td><td><button class="btn btn-secondary">Éditer</button></td></tr></tbody></table></div></div>
+                <div id="appointments" class="panel hidden">
+                    <div class="page-header"><h1>Rendez-vous</h1><button class="btn btn-primary" onclick="openAppointmentForm()">Ajouter un RDV</button></div>
+                    <div class="table-wrapper"><table><thead><tr><th>Client</th><th>Service</th><th>Date & Heure</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="appointmentsTableBody"></tbody></table></div>
+                </div>
+                <div id="clients" class="panel hidden">
+                    <div class="page-header"><h1>Clients</h1><button class="btn btn-primary" onclick="openClientForm()">Ajouter un Client</button></div>
+                    <div class="table-wrapper"><table><thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Dernière Visite</th><th>Actions</th></tr></thead><tbody id="clientsTableBody"></tbody></table></div>
+                </div>
+                <div id="products" class="panel hidden">
+                    <div class="page-header"><h1>Produits</h1><button class="btn btn-primary" onclick="openProductForm()">Ajouter un Produit</button></div>
+                    <div class="table-wrapper"><table><thead><tr><th>Produit</th><th>SKU</th><th>Stock</th><th>Prix</th><th>Actions</th></tr></thead><tbody id="productsTableBody"></tbody></table></div>
+                </div>
                 
                 <div id="settings" class="panel hidden">
                     <div class="page-header"><h1>Paramètres</h1></div>
-                    
                     <div class="kpi-card">
                         <h3>Profil</h3>
                         <form><div class="form-grid"><div class="form-group col-span-1"><label>Nom d'affichage</label><br><input type="text" value="${userName}" style="margin-top:8px;"></div><div class="form-group col-span-1"><label>Email</label><br><input type="email" value="${userEmail}" disabled style="margin-top:8px;"></div><div class="form-group"><label>Nouveau mot de passe</label><br><input type="password" placeholder="Laisser vide pour ne pas changer" style="margin-top:8px;"></div></div><hr style="border-color: var(--border-color); margin: 24px 0;"><div class="toggle-switch"><p>Notifications par email</p><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div><hr style="border-color: var(--border-color); margin: 24px 0;"><div style="display: flex; justify-content: space-between; align-items: center;"><button type="button" class="btn btn-danger">Supprimer le compte</button><button type="submit" class="btn btn-primary">Sauvegarder les changements</button></div></form>
                     </div>
-
                     <div class="kpi-card appearance-card">
                         <h3>Personnalisation de l'apparence</h3>
                         <p style="color: var(--text-secondary); margin-top: 4px; margin-bottom: 20px;">Créez l'environnement de travail qui vous convient.</p>
@@ -432,22 +421,9 @@
                                 Thème et Arrière-plan
                             </button>
                             <div id="appearanceDropdown" class="settings-dropdown hidden">
-                                <div class="dropdown-section">
-                                    <div class="dropdown-section-title">Thème</div>
-                                    <div class="theme-selector">
-                                        <button id="theme-btn-dark" class="theme-btn active" onclick="applyAndSaveTheme('dark')">Sombre</button>
-                                        <button id="theme-btn-light" class="theme-btn" onclick="applyAndSaveTheme('light')">Clair</button>
-                                    </div>
-                                </div>
+                                <div class="dropdown-section"><div class="dropdown-section-title">Thème</div><div class="theme-selector"><button id="theme-btn-dark" class="theme-btn active" onclick="applyAndSaveTheme('dark')">Sombre</button><button id="theme-btn-light" class="theme-btn" onclick="applyAndSaveTheme('light')">Clair</button></div></div>
                                 <div class="dropdown-divider"></div>
-                                <div class="dropdown-section">
-                                    <div class="dropdown-section-title">Arrière-plan</div>
-                                    <div class="dropdown-item" onclick="openAppearancePopup('color')">Couleur unie</div>
-                                    <div class="dropdown-item" onclick="openAppearancePopup('gradient')">Dégradé</div>
-                                    <div class="dropdown-item" onclick="openAppearancePopup('url')">Image via lien</div>
-                                    <div class="dropdown-item" onclick="openAppearancePopup('upload')">Uploader une image</div>
-                                    <div class="dropdown-item" onclick="openAppearancePopup('default')">Fonds par défaut</div>
-                                </div>
+                                <div class="dropdown-section"><div class="dropdown-section-title">Arrière-plan</div><div class="dropdown-item" onclick="openAppearancePopup('color')">Couleur unie</div><div class="dropdown-item" onclick="openAppearancePopup('gradient')">Dégradé</div><div class="dropdown-item" onclick="openAppearancePopup('url')">Image via lien</div><div class="dropdown-item" onclick="openAppearancePopup('upload')">Uploader une image</div><div class="dropdown-item" onclick="openAppearancePopup('default')">Fonds par défaut</div></div>
                             </div>
                         </div>
                     </div>
@@ -455,6 +431,13 @@
             </main>`;
         }
         
+        // --- DATA INITIALIZATION ---
+        function initDashboardData() {
+            renderClientsTable();
+            renderAppointmentsTable();
+            renderProductsTable();
+        }
+
         // --- CHART INITIALIZATION ---
         function initDashboardCharts() {
             const chartBaseOptions = {
@@ -483,11 +466,7 @@
                 ...chartBaseOptions, series: [44, 55, 21],
                 chart: { ...chartBaseOptions.chart, type: 'donut', height: 350 },
                 labels: ['Coupes', 'Couleurs', 'Soins'],
-                colors: [
-                    getComputedStyle(document.documentElement).getPropertyValue('--primary-blue').trim(), 
-                    getComputedStyle(document.documentElement).getPropertyValue('--purple').trim(), 
-                    getComputedStyle(document.documentElement).getPropertyValue('--green').trim()
-                ],
+                colors: [getComputedStyle(document.documentElement).getPropertyValue('--primary-blue').trim(), getComputedStyle(document.documentElement).getPropertyValue('--purple').trim(), getComputedStyle(document.documentElement).getPropertyValue('--green').trim()],
                 legend: { position: 'bottom', markers: { radius: 12 }, labels: { colors: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() } },
                 plotOptions: { pie: { donut: { labels: { show: true, total: { show: true, label: 'Total Services', color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim(), formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0) }, value: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim() } } } } }
             };
@@ -506,8 +485,12 @@
             const toastContainer = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast toast--${type}`;
-            const iconSvg = type === 'success' ? `<svg class="toast-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` : `<svg class="toast-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
-            toast.innerHTML = `${iconSvg}<div>${message}</div>`;
+            const iconMap = {
+                success: `<svg class="toast-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+                info: `<svg class="toast-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+                error: `<svg class="toast-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>`
+            };
+            toast.innerHTML = `${iconMap[type] || iconMap['info']}<div>${message}</div>`;
             toastContainer.appendChild(toast);
             setTimeout(() => { toast.classList.add('hiding'); toast.addEventListener('animationend', () => toast.remove()); }, 5000);
         };
@@ -520,42 +503,23 @@
         const getFriendlyErrorMessage = (c) => ({'auth/user-not-found':'Email non trouvé.','auth/wrong-password':'Mot de passe incorrect.','auth/email-already-in-use':'Cet email est déjà utilisé.','auth/weak-password':'Le mot de passe doit faire au moins 6 caractères.'}[c]||'Une erreur est survenue.');
     
         // --- CUSTOMIZATION FUNCTIONS ---
-
         async function saveUserSettings(settings) {
             const user = auth.currentUser;
             if (!user) return;
             try {
                 await db.collection('users').doc(user.uid).set({ settings }, { merge: true });
                 currentUserSettings = { ...currentUserSettings, ...settings };
-            } catch (error) {
-                console.error("Erreur lors de la sauvegarde des paramètres:", error);
-                showToast("Impossible de sauvegarder les paramètres.", "error");
-            }
+            } catch (error) { console.error("Erreur lors de la sauvegarde des paramètres:", error); showToast("Impossible de sauvegarder les paramètres.", "error"); }
         }
 
         async function loadAndApplyUserSettings(user) {
-            const defaultSettings = {
-                theme: 'dark',
-                background: { type: 'default', value: 'var(--body-bg)' }
-            };
-
-            if (!user) {
-                applyUserSettings(defaultSettings);
-                return;
-            }
-
+            const defaultSettings = { theme: 'dark', background: { type: 'default', value: 'var(--body-bg)' } };
+            if (!user) { applyUserSettings(defaultSettings); return; }
             try {
                 const doc = await db.collection('users').doc(user.uid).get();
-                if (doc.exists && doc.data().settings) {
-                    currentUserSettings = { ...defaultSettings, ...doc.data().settings };
-                } else {
-                    currentUserSettings = defaultSettings;
-                }
+                currentUserSettings = (doc.exists && doc.data().settings) ? { ...defaultSettings, ...doc.data().settings } : defaultSettings;
                 applyUserSettings(currentUserSettings);
-            } catch (error) {
-                console.error("Erreur lors du chargement des paramètres:", error);
-                applyUserSettings(defaultSettings);
-            }
+            } catch (error) { console.error("Erreur lors du chargement des paramètres:", error); applyUserSettings(defaultSettings); }
         }
 
         function applyUserSettings(settings) {
@@ -575,14 +539,9 @@
                 case 'color': bgStyle = bg.value; break;
                 case 'gradient': bgStyle = `linear-gradient(${bg.angle || '45'}deg, ${bg.color1}, ${bg.color2})`; break;
                 case 'url': bgStyle = `url('${bg.value}')`; break;
-                case 'default':
-                default:
-                    document.body.style.backgroundImage = 'none';
-                    document.body.style.backgroundColor = 'var(--body-bg)';
-                    return;
+                case 'default': default: document.body.style.backgroundImage = 'none'; document.body.style.backgroundColor = 'var(--body-bg)'; return;
             }
-            document.body.style.backgroundImage = bgStyle;
-            document.body.style.backgroundColor = 'transparent';
+            document.body.style.backgroundImage = bgStyle; document.body.style.backgroundColor = 'transparent';
         }
 
         async function applyAndSaveTheme(theme) {
@@ -598,70 +557,256 @@
             event.stopPropagation();
             const dropdown = document.getElementById('appearanceDropdown');
             dropdown.classList.toggle('hidden');
-            if (!dropdown.classList.contains('hidden')) {
-                document.addEventListener('click', closeAppearanceDropdownOnClickOutside, { once: true });
-            }
+            if (!dropdown.classList.contains('hidden')) { document.addEventListener('click', closeAppearanceDropdownOnClickOutside, { once: true }); }
         }
-
         function closeAppearanceDropdownOnClickOutside(event) {
             const dropdown = document.getElementById('appearanceDropdown');
-            if (dropdown && !dropdown.contains(event.target)) {
-                dropdown.classList.add('hidden');
-            }
+            if (dropdown && !dropdown.contains(event.target)) { dropdown.classList.add('hidden'); }
         }
-        
-        function openAppearancePopup(type) {
+
+        // --- POPUP SYSTEM ---
+        function showPopup({ title, body, footer, isLarge = false }) {
             closePopup();
             const popupRoot = document.getElementById('popup-root');
-            let title = '', bodyContent = '', onSave = () => {};
-
-            switch(type) {
-                case 'color':
-                    title = "Choisir une couleur unie";
-                    bodyContent = `<div class="form-group"><label for="bgColor">Couleur de fond</label><input type="color" id="bgColor" value="${currentUserSettings.background?.type === 'color' ? currentUserSettings.background.value : '#111827'}" style="width: 100%; height: 50px; padding: 5px;"></div>`;
-                    onSave = () => { const newBg = { type: 'color', value: document.getElementById('bgColor').value }; applyBackground(newBg); saveUserSettings({ background: newBg }); };
-                    break;
-                case 'gradient':
-                    title = "Créer un dégradé";
-                    bodyContent = `<div class="form-group"><label for="gradColor1">Couleur 1</label><input type="color" id="gradColor1" value="${currentUserSettings.background?.color1 || '#8b5cf6'}"></div><div class="form-group"><label for="gradColor2">Couleur 2</label><input type="color" id="gradColor2" value="${currentUserSettings.background?.color2 || '#3b82f6'}"></div>`;
-                    onSave = () => { const newBg = { type: 'gradient', color1: document.getElementById('gradColor1').value, color2: document.getElementById('gradColor2').value }; applyBackground(newBg); saveUserSettings({ background: newBg }); };
-                    break;
-                case 'url':
-                    title = "Image depuis une URL";
-                    bodyContent = `<div class="form-group"><label for="bgUrl">URL de l'image</label><input type="text" id="bgUrl" placeholder="https://exemple.com/image.jpg" value="${currentUserSettings.background?.type === 'url' ? currentUserSettings.background.value : ''}"></div>`;
-                    onSave = () => { const value = document.getElementById('bgUrl').value; if (!value) return showToast("Veuillez entrer une URL valide.", "error"); const newBg = { type: 'url', value }; applyBackground(newBg); saveUserSettings({ background: newBg }); };
-                    break;
-                case 'upload':
-                    title = "Uploader une image";
-                    bodyContent = `<p>Cette fonctionnalité est en cours de développement.</p>`;
-                    onSave = () => showToast("Fonctionnalité non implémentée.", "info");
-                    break;
-                case 'default':
-                    title = "Restaurer l'arrière-plan par défaut";
-                    bodyContent = `<p>Êtes-vous sûr de vouloir réinitialiser l'arrière-plan ?</p>`;
-                    onSave = () => { const newBg = { type: 'default', value: 'var(--body-bg)' }; applyBackground(newBg); saveUserSettings({ background: newBg }); };
-                    break;
-            }
-            
             const popupHTML = `
                 <div class="popup-overlay" onclick="closePopup()">
-                    <div class="popup-container" onclick="event.stopPropagation()">
+                    <div class="popup-container ${isLarge ? 'large' : ''}" onclick="event.stopPropagation()">
                         <div class="popup-header"><h3>${title}</h3><button class="close-btn" onclick="closePopup()">×</button></div>
-                        <div class="popup-body">${bodyContent}</div>
-                        <div class="popup-footer">
-                            <button class="btn btn-secondary" onclick="closePopup()">Annuler</button>
-                            <button class="btn btn-primary" id="popupSaveBtn">Appliquer</button>
-                        </div>
+                        <div class="popup-body">${body}</div>
+                        <div class="popup-footer">${footer}</div>
                     </div>
                 </div>`;
             popupRoot.innerHTML = popupHTML;
-            document.getElementById('popupSaveBtn').onclick = () => { onSave(); closePopup(); showToast("Arrière-plan mis à jour.", "success"); };
         }
-
         function closePopup() {
             const popupRoot = document.getElementById('popup-root');
             if (popupRoot) popupRoot.innerHTML = '';
         }
+        function openAppearancePopup(type) {
+            let title = '', bodyContent = '', onSave = () => {};
+            switch(type) {
+                case 'color': title = "Choisir une couleur unie"; bodyContent = `<div class="form-group"><label for="bgColor">Couleur de fond</label><input type="color" id="bgColor" value="${currentUserSettings.background?.type === 'color' ? currentUserSettings.background.value : '#111827'}" style="width: 100%; height: 50px; padding: 5px;"></div>`; onSave = () => { const newBg = { type: 'color', value: document.getElementById('bgColor').value }; applyBackground(newBg); saveUserSettings({ background: newBg }); }; break;
+                case 'gradient': title = "Créer un dégradé"; bodyContent = `<div class="form-group"><label for="gradColor1">Couleur 1</label><input type="color" id="gradColor1" value="${currentUserSettings.background?.color1 || '#8b5cf6'}"></div><div class="form-group"><label for="gradColor2">Couleur 2</label><input type="color" id="gradColor2" value="${currentUserSettings.background?.color2 || '#3b82f6'}"></div>`; onSave = () => { const newBg = { type: 'gradient', color1: document.getElementById('gradColor1').value, color2: document.getElementById('gradColor2').value }; applyBackground(newBg); saveUserSettings({ background: newBg }); }; break;
+                case 'url': title = "Image depuis une URL"; bodyContent = `<div class="form-group"><label for="bgUrl">URL de l'image</label><input type="text" id="bgUrl" placeholder="https://exemple.com/image.jpg" value="${currentUserSettings.background?.type === 'url' ? currentUserSettings.background.value : ''}"></div>`; onSave = () => { const value = document.getElementById('bgUrl').value; if (!value) return showToast("Veuillez entrer une URL valide.", "error"); const newBg = { type: 'url', value }; applyBackground(newBg); saveUserSettings({ background: newBg }); }; break;
+                case 'upload': title = "Uploader une image"; bodyContent = `<p>Cette fonctionnalité est en cours de développement.</p>`; onSave = () => showToast("Fonctionnalité non implémentée.", "info"); break;
+                case 'default': title = "Restaurer l'arrière-plan par défaut"; bodyContent = `<p>Êtes-vous sûr de vouloir réinitialiser l'arrière-plan ?</p>`; onSave = () => { const newBg = { type: 'default', value: 'var(--body-bg)' }; applyBackground(newBg); saveUserSettings({ background: newBg }); }; break;
+            }
+            showPopup({
+                title, body: bodyContent,
+                footer: `<button class="btn btn-secondary" onclick="closePopup()">Annuler</button><button class="btn btn-primary" id="popupSaveBtn">Appliquer</button>`
+            });
+            document.getElementById('popupSaveBtn').onclick = () => { onSave(); closePopup(); showToast("Arrière-plan mis à jour.", "success"); };
+        }
+
+        // --- COMPANY TOOLS ---
+        const toolsData = {
+            marketing: { name: 'Marketing & Ventes', tools: [ { name: 'Mailchimp', desc: 'Créez et envoyez des campagnes emailing professionnelles à vos clients.', img: 'https://i.imgur.com/G5O1E78.png', url: 'https://mailchimp.com' }, { name: 'Google Business', desc: 'Gérez votre profil d\'entreprise sur Google Search et Maps.', img: 'https://i.imgur.com/eL0yW4p.png', url: 'https://www.google.com/business/' }, { name: 'Meta Business Suite', desc: 'Gérez vos pages Facebook et Instagram, publiez du contenu et analysez vos stats.', img: 'https://i.imgur.com/pZ6dY3p.png', url: 'https://business.facebook.com/' } ]},
+            productivity: { name: 'Productivité & Organisation', tools: [ { name: 'Calendly', desc: 'Permettez à vos clients de prendre rendez-vous en ligne facilement.', img: 'https://i.imgur.com/3Z6Kx7v.png', url: 'https://calendly.com' }, { name: 'Trello', desc: 'Organisez vos tâches et projets sur des tableaux visuels et intuitifs.', img: 'https://i.imgur.com/vHqQ3zK.png', url: 'https://trello.com' }, { name: 'Notion', desc: 'Un espace de travail tout-en-un pour vos notes, documents et bases de données.', img: 'https://i.imgur.com/X0J0Y8G.png', url: 'https://www.notion.so' }, { name: 'ChatGPT', desc: 'Organisez vos tâches et projets avec un assistant dédié.', img: 'https://i.imgur.com/vHqQ3zK.png', url: 'https://chatgpt.com/' } ]},
+            finance: { name: 'Finance & Comptabilité', tools: [ { name: 'SumUp', desc: 'Acceptez les paiements par carte bancaire avec un terminal simple.', img: 'https://i.imgur.com/9n9O7Lq.png', url: 'https://www.sumup.com/' }, { name: 'QuickBooks', desc: 'Logiciel de comptabilité pour suivre vos revenus, dépenses et factures.', img: 'https://i.imgur.com/3sI4o2q.png', url: 'https://quickbooks.intuit.com/' } ]},
+            design: { name: 'Design & Créativité', tools: [ { name: 'Canva', desc: 'Créez facilement des visuels pour vos réseaux sociaux, flyers et cartes de visite.', img: 'https://i.imgur.com/nL1M1Fj.png', url: 'https://www.canva.com' }, { name: 'Unsplash', desc: 'Trouvez des photos de haute qualité, libres de droits, pour illustrer votre site.', img: 'https://i.imgur.com/WlB2F9C.png', url: 'https://unsplash.com' } ]}
+        };
+        function openToolsHubPopup() {
+            let bodyContent = '<div class="tool-category-grid">';
+            for (const key in toolsData) {
+                bodyContent += `<button class="btn btn-secondary" style="justify-content:center; text-align:center; height: 60px;" onclick="openToolCategoryPopup('${key}')">${toolsData[key].name}</button>`;
+            }
+            bodyContent += '</div>';
+            showPopup({ title: "Catégories d'outils", body: bodyContent, footer: `<button class="btn btn-secondary" onclick="closePopup()">Fermer</button>`, isLarge: true });
+        }
+        function openToolCategoryPopup(categoryKey) {
+            const category = toolsData[categoryKey];
+            let bodyContent = '<div class="tool-card-grid">';
+            category.tools.forEach(tool => {
+                bodyContent += `
+                    <div class="tool-card">
+                        <img src="${tool.img}" alt="${tool.name}">
+                        <h4>${tool.name}</h4>
+                        <p>${tool.desc}</p>
+                        <a href="${tool.url}" target="_blank" class="btn btn-primary btn-sm">Visiter le site</a>
+                    </div>`;
+            });
+            bodyContent += '</div>';
+            showPopup({
+                title: category.name, body: bodyContent,
+                footer: `<button class="btn btn-secondary" onclick="openToolsHubPopup()">Retour aux catégories</button>`,
+                isLarge: true
+            });
+        }
+        
+        // --- DYNAMIC TABLE RENDERING ---
+        function renderClientsTable() {
+            const tableBody = document.getElementById('clientsTableBody');
+            tableBody.innerHTML = clientsData.map((client, index) => `
+                <tr>
+                    <td>${client.name}</td>
+                    <td><a href="mailto:${client.email}">${client.email}</a></td>
+                    <td><a href="tel:${client.phone}">${client.phone}</a></td>
+                    <td>${new Date(client.lastVisit).toLocaleDateString('fr-FR')}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="openClientDetailsPopup(${index})">Détails</button>
+                        <button class="btn btn-secondary btn-sm" onclick="openClientForm(${index})">Éditer</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteClient(${index})">Supprimer</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        function renderAppointmentsTable() {
+            const tableBody = document.getElementById('appointmentsTableBody');
+            const statusClasses = { 'Confirmé': 'yellow', 'Terminé': 'green' };
+            tableBody.innerHTML = appointmentsData.map((rdv, index) => {
+                const client = clientsData.find(c => c.id === rdv.clientId);
+                return `
+                <tr>
+                    <td>${client ? client.name : 'Client inconnu'}</td>
+                    <td>${rdv.service}</td>
+                    <td>${rdv.datetime}</td>
+                    <td><span class="status-badge ${statusClasses[rdv.status] || 'yellow'}">${rdv.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="openAppointmentForm(${index})">Éditer</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAppointment(${index})">Supprimer</button>
+                    </td>
+                </tr>`
+            }).join('');
+        }
+        function renderProductsTable() {
+            const tableBody = document.getElementById('productsTableBody');
+            tableBody.innerHTML = productsData.map((product, index) => `
+                <tr>
+                    <td>${product.name}</td>
+                    <td>${product.sku}</td>
+                    <td>${product.stock}</td>
+                    <td>${product.price.toFixed(2)}€</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="openProductForm(${index})">Éditer</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${index})">Supprimer</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // --- CRUD OPERATIONS ---
+        // Clients
+        function openClientDetailsPopup(index) {
+            const client = clientsData[index];
+            const bodyContent = `
+                <div style="display: grid; gap: 20px; font-size: 16px;">
+                    <div>
+                        <strong style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Email</strong>
+                        <a href="mailto:${client.email}">${client.email}</a>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Téléphone</strong>
+                        <a href="tel:${client.phone}">${client.phone}</a>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Dernière visite</strong>
+                        <span>${new Date(client.lastVisit).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Notes</strong>
+                        <div style="white-space: pre-wrap; background-color: var(--bg-light); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); min-height: 80px;">${client.details || 'Aucune note.'}</div>
+                    </div>
+                </div>
+            `;
+            showPopup({
+                title: `Détails pour ${client.name}`,
+                body: bodyContent,
+                footer: `<button class="btn btn-secondary" onclick="closePopup()">Fermer</button>`
+            });
+        }
+
+        function openClientForm(index = null) {
+            const isEditing = index !== null;
+            const client = isEditing ? clientsData[index] : { name: '', email: '', phone: '', details: '', lastVisit: new Date().toISOString().split('T')[0] };
+            showPopup({
+                title: isEditing ? 'Modifier le client' : 'Ajouter un client',
+                body: `
+                    <div class="form-group"><label>Nom</label><input type="text" id="clientName" value="${client.name}" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="clientEmail" value="${client.email}" required></div>
+                    <div class="form-group"><label>Téléphone</label><input type="tel" id="clientPhone" value="${client.phone}"></div>
+                    <div class="form-group"><label>Notes</label><textarea id="clientDetails" rows="4">${client.details || ''}</textarea></div>
+                `,
+                footer: `<button class="btn btn-secondary" onclick="closePopup()">Annuler</button><button class="btn btn-primary" onclick="saveClient(${index})">Sauvegarder</button>`
+            });
+        }
+        function saveClient(index) {
+            const client = {
+                id: index !== null ? clientsData[index].id : Date.now(),
+                name: document.getElementById('clientName').value,
+                email: document.getElementById('clientEmail').value,
+                phone: document.getElementById('clientPhone').value,
+                details: document.getElementById('clientDetails').value,
+                lastVisit: new Date().toISOString().split('T')[0]
+            };
+            if(index !== null) { clientsData[index] = client; } else { clientsData.push(client); }
+            renderClientsTable();
+            closePopup();
+            showToast(index !== null ? 'Client mis à jour.' : 'Client ajouté.', 'success');
+        }
+        function deleteClient(index) { if(confirm('Voulez-vous vraiment supprimer ce client ?')) { clientsData.splice(index, 1); renderClientsTable(); showToast('Client supprimé.', 'info'); } }
+
+        // Appointments
+        function openAppointmentForm(index = null) {
+            const isEditing = index !== null;
+            const rdv = isEditing ? appointmentsData[index] : { clientId: '', service: '', datetime: '', status: 'Confirmé' };
+            const clientOptions = clientsData.map(c => `<option value="${c.id}" ${rdv.clientId === c.id ? 'selected' : ''}>${c.name}</option>`).join('');
+            showPopup({
+                title: isEditing ? 'Modifier le rendez-vous' : 'Ajouter un rendez-vous',
+                body: `
+                    <div class="form-group"><label>Client</label><select id="rdvClient">${clientOptions}</select></div>
+                    <div class="form-group"><label>Service</label><input type="text" id="rdvService" value="${rdv.service}" required></div>
+                    <div class="form-group"><label>Date & Heure</label><input type="text" id="rdvDatetime" value="${rdv.datetime}" placeholder="ex: Demain, 15:00" required></div>
+                    <div class="form-group"><label>Statut</label><select id="rdvStatus"><option value="Confirmé" ${rdv.status === 'Confirmé' ? 'selected' : ''}>Confirmé</option><option value="Terminé" ${rdv.status === 'Terminé' ? 'selected' : ''}>Terminé</option></select></div>
+                `,
+                footer: `<button class="btn btn-secondary" onclick="closePopup()">Annuler</button><button class="btn btn-primary" onclick="saveAppointment(${index})">Sauvegarder</button>`
+            });
+        }
+        function saveAppointment(index) {
+            const rdv = {
+                id: index !== null ? appointmentsData[index].id : Date.now(),
+                clientId: parseInt(document.getElementById('rdvClient').value),
+                service: document.getElementById('rdvService').value,
+                datetime: document.getElementById('rdvDatetime').value,
+                status: document.getElementById('rdvStatus').value
+            };
+            if(index !== null) { appointmentsData[index] = rdv; } else { appointmentsData.push(rdv); }
+            renderAppointmentsTable();
+            closePopup();
+            showToast(index !== null ? 'Rendez-vous mis à jour.' : 'Rendez-vous ajouté.', 'success');
+        }
+        function deleteAppointment(index) { if(confirm('Voulez-vous vraiment supprimer ce rendez-vous ?')) { appointmentsData.splice(index, 1); renderAppointmentsTable(); showToast('Rendez-vous supprimé.', 'info'); } }
+
+        // Products
+        function openProductForm(index = null) {
+            const isEditing = index !== null;
+            const product = isEditing ? productsData[index] : { name: '', sku: '', stock: 0, price: 0.0 };
+            showPopup({
+                title: isEditing ? 'Modifier le produit' : 'Ajouter un produit',
+                body: `
+                    <div class="form-group"><label>Nom du produit</label><input type="text" id="prodName" value="${product.name}" required></div>
+                    <div class="form-grid">
+                        <div class="form-group col-span-1"><label>SKU</label><input type="text" id="prodSku" value="${product.sku}"></div>
+                        <div class="form-group col-span-1"><label>Stock</label><input type="number" id="prodStock" value="${product.stock}"></div>
+                        <div class="form-group col-span-1"><label>Prix (€)</label><input type="number" step="0.01" id="prodPrice" value="${product.price.toFixed(2)}"></div>
+                    </div>
+                `,
+                footer: `<button class="btn btn-secondary" onclick="closePopup()">Annuler</button><button class="btn btn-primary" onclick="saveProduct(${index})">Sauvegarder</button>`
+            });
+        }
+        function saveProduct(index) {
+            const product = {
+                id: index !== null ? productsData[index].id : Date.now(),
+                name: document.getElementById('prodName').value,
+                sku: document.getElementById('prodSku').value,
+                stock: parseInt(document.getElementById('prodStock').value),
+                price: parseFloat(document.getElementById('prodPrice').value)
+            };
+            if(index !== null) { productsData[index] = product; } else { productsData.push(product); }
+            renderProductsTable();
+            closePopup();
+            showToast(index !== null ? 'Produit mis à jour.' : 'Produit ajouté.', 'success');
+        }
+        function deleteProduct(index) { if(confirm('Voulez-vous vraiment supprimer ce produit ?')) { productsData.splice(index, 1); renderProductsTable(); showToast('Produit supprimé.', 'info'); } }
 
         // Initialisation de l'UI
         setUIState('AUTH');
